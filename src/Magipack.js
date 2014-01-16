@@ -14,6 +14,7 @@
 var Magipack = (function() {
 	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 	Magipack.isIE = document.all;
+	Magipack.version = '0.1';
 	if(Magipack.isIE)
 	{
 		var s = document.createElement('script');
