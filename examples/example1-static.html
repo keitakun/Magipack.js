@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<script src='../src/Magipack.min.js'></script>
+<script>
+
+Magipack.init();
+Magipack.onLoadComplete = function()
+{
+	document.getElementById("i1").src = Magipack.getURI('forkit.gif');
+	document.getElementById("i2").src = Magipack.getURI('mario.jpg');
+	document.getElementById("i3").src = Magipack.getURI('Smile.png');
+	document.getElementById("container").style.backgroundImage = 'url(' + Magipack.getURI('packman_ghost.gif') + ')';
+}
+
+Magipack.load('images.pack', 'images.json');
+</script>
+<style>
+img
+{
+	max-width: 200px;
+	max-height: 200px;
+}
+#container
+{
+	background-size: 100px 100px;
+}
+</style>
+</head>
+<body>
+	<h1>Magipack Static usage.</h1>
+	<div id="container">
+		<img id="i1" />
+		<img id="i2" />
+		<img id="i3" />
+	</div>
+</body>
+</html>
