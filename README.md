@@ -27,6 +27,11 @@ There wasn't any large scale testing for this project yet, so if you find any [i
 
 Examples
 ========
+
+[example1-static.html](http://hellokeita.in/xp/Magipack.js/example1-static.html)
+[example2-instance.html](http://hellokeita.in/xp/Magipack.js/example2-instance.html)
+[example3-preloadjs.html](http://hellokeita.in/xp/Magipack.js/example3-preloadjs.html)
+
 ### Using as static class
 ```javascript
 Magipack.init();
