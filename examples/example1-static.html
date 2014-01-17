@@ -2,9 +2,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<script src='../src/Magipack.min.js'></script>
+<script src='../src/Magipack.js'></script>
 <script>
-
 Magipack.init();
 Magipack.onLoadComplete = function()
 {
@@ -12,9 +11,20 @@ Magipack.onLoadComplete = function()
 	document.getElementById("i2").src = Magipack.getURI('mario.jpg');
 	document.getElementById("i3").src = Magipack.getURI('Smile.png');
 	document.getElementById("container").style.backgroundImage = 'url(' + Magipack.getURI('packman_ghost.gif') + ')';
+	var images = document.getElementsByTagName('img');
+	var i = images.length;
+	var image;
+	while(i-- > 0)
+	{
+		image = images[i]
+		image.onmousedown = function(e)
+		{
+			window.open(image.src);
+		}
+	}
 }
 
-Magipack.load('images.pack', 'images.json');
+Magipack.load('images.pack?a=121', 'images.json');
 </script>
 <style>
 img

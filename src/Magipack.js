@@ -11,15 +11,23 @@
  **/
 
  
-var Magipack = (function() {
+window.Magipack = (function() {
 	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
-	Magipack.isIE = document.all;
+	Magipack.isIE = Boolean(document.all);
+	var hasBlob = false;
+	try{
+		hasBlob = Boolean(Blob);
+	}catch(e)
+	{
+		hasBlob = false;
+	}
+	Magipack.hasBlob = hasBlob;
 	Magipack.version = '0.1';
-	if(Magipack.isIE)
+	if(!Magipack.hasBlob)
 	{
 		var s = document.createElement('script');
 		s.type = 'text/vbscript';
-		s.innerHTML = ''+
+		s.text = '' + 
 			'Function IEBinaryToArray_ByteStr(Binary)\n' +
 			'	IEBinaryToArray_ByteStr = CStr(Binary)\n' +
 			'End Function\n' +
@@ -32,7 +40,7 @@ var Magipack = (function() {
 			'		IEBinaryToArray_ByteStr_Last = ""\n' +
 			'	End If\n' +
 			'End Function';
-		document.write(s.outerHTML);
+		document.body.appendChild(s);
 
 		function GetIEByteArray_ByteStr(IEByteArray) {
 			var ByteMapping = {};
@@ -47,46 +55,45 @@ var Magipack = (function() {
 			return rawBytes.replace(/[\s\S]/g, 
 				function( match ) { return ByteMapping[match]; }) + lastChr;
 		}
-
-		function b64encodeString(value)
-		{
-			var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-			chars = chars.split('');
-			var l = value.length;
-			var i = 0;
-			var cb = b = 0;
-			var bl = 0;
-			var v = 0;
-			var b0, b1, b2;
-			var c0, c1, c2, c3;
-			var ret = '';
-			while(i < l)
-			{
-				b0 = value.charCodeAt(i + 0) & 0xFF;
-				b1 = value.charCodeAt(i + 1) & 0xFF;
-				b2 = value.charCodeAt(i + 2) & 0xFF;
-				c0 = b0 >> 2 & 0x3F;
-				c1 = (b0 << 4 | b1 >> 4) & 0x3F;
-				c2 = (b1 << 2 | b2 >> 6) & 0x3F;
-				c3 = b2 & 0x3F;
-
-				ret += chars[c0] + chars[c1] + chars[c2] + chars[c3];
-				i += 3;
-			}
-
-			i = l % 3;
-			l = ret.length;
-			if(i == 1)
-			{
-				ret = ret.substr(0, l - 2) + "=="
-			}else if(i == 2)
-			{
-				ret = ret.substr(0, l - 1) + "="
-			}
-			return ret;
-		}
 	}
-	
+
+	function b64encodeString(value)
+	{
+		var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+		chars = chars.split('');
+		var l = value.length;
+		var i = 0;
+		var cb = b = 0;
+		var bl = 0;
+		var v = 0;
+		var b0, b1, b2;
+		var c0, c1, c2, c3;
+		var ret = '';
+		while(i < l)
+		{
+			b0 = value.charCodeAt(i + 0) & 0xFF;
+			b1 = value.charCodeAt(i + 1) & 0xFF;
+			b2 = value.charCodeAt(i + 2) & 0xFF;
+			c0 = b0 >> 2 & 0x3F;
+			c1 = (b0 << 4 | b1 >> 4) & 0x3F;
+			c2 = (b1 << 2 | b2 >> 6) & 0x3F;
+			c3 = b2 & 0x3F;
+
+			ret += chars[c0] + chars[c1] + chars[c2] + chars[c3];
+			i += 3;
+		}
+
+		i = l % 3;
+		l = ret.length;
+		if(i == 1)
+		{
+			ret = ret.substr(0, l - 2) + "=="
+		}else if(i == 2)
+		{
+			ret = ret.substr(0, l - 1) + "="
+		}
+		return ret;
+	}
 	function req()
 	{
 		if(window.XMLHttpRequest) return new XMLHttpRequest()
@@ -94,20 +101,53 @@ var Magipack = (function() {
 	}
 
 	function Magipack(pack, config) {
+		this.progress = 0
 		if(pack)
 		{
 			this.init(pack, config);
 		}
 	}
 
+	Magipack.prototype._onProgress = function(e)
+	{
+		p = e.position / e.totalSize;
+		if(isNaN(p)) p = 0;
+		if(this._configComplete)
+		{
+			p = p * 0.9 + 0.1;
+		}else{
+			p *= 0.1;
+		}
+		this.progress = p;
+		if(this.onProgress) this.onProgress(p, 1);
+	}
+
 	Magipack.prototype._loadFile = function(path, callback, type)
 	{
 		var xhr = req();
-		if(!type) type = 'blob';
+		if(!type)
+		{
+			type = 'arraybuffer';
+			try{
+				if(Blob.prototype.slice)
+				{
+					type = 'blob';
+				}
+			}catch(e)
+			{
+
+			}
+		}
+
 		xhr.open('GET', path, true);
+
 		xhr.responseType = type;
 		var _callback = callback;
 		var _this = this;
+		xhr.onprogress = function(e)
+		{
+			_this._onProgress(e)
+		}
 		xhr.onreadystatechange = function(e) {
 			if (this.readyState == 4) {
 				if(_callback) _callback.call(_this, this);
@@ -120,13 +160,14 @@ var Magipack = (function() {
 
 	Magipack.prototype._configLoaded = function(e)
 	{
-		this.config = JSON.parse(e.responseText);
+		this._configComplete = true;
+		this.config = eval('(' + e.responseText + ')');
 		this._loadFile(this.pack, this._packLoaded);
 	}
 
 	Magipack.prototype._packLoaded = function(e)
 	{
-		if(Magipack.isIE)
+		if(!Magipack.hasBlob)
 		{
 			this.init(e.responseBody, this.config);
 		}else{
@@ -142,6 +183,13 @@ var Magipack = (function() {
 	{
 		var i;
 		i = this.config.length;
+		while (i-- > 0)
+		{
+			if(this.config[i][0] == name)
+			{
+				return this.config[i];
+			}
+		}
 		while (i-- > 0) {
 			if (name.indexOf(this.config[i][0]) >= 0) {
 				return this.config[i];
@@ -151,21 +199,35 @@ var Magipack = (function() {
 
 	Magipack.prototype._getRange = function(i, e, type)
 	{
-		if (Magipack.isIE) {
-			return 'data:' + type + ';base64,' + b64encodeString(this.ieBlob.substr(i, e - i));
+		if (!Magipack.hasBlob) {
+			if (Magipack.isIE)
+			{
+				return 'data:' + type + ';base64,' + b64encodeString(this.ieBlob.substr(i, e - i));
+			}
 		} else {
-			var b = this.blob.slice(i, e);
-			b.type = type;
-			return window.URL.createObjectURL(b);
+			var b;
+			if(this.blob.slice)
+			{
+				b = this.blob.slice(i, e);
+				return window.URL.createObjectURL(b);
+			}else if (this.blob.webkitSlice)
+			{
+				b = this.blob.webkitSlice(i, e, type);
+				return window.URL.createObjectURL(b);
+			}else if(this.blob.mozSlice)
+			{
+				b = this.blob.mozSlice(i, e, type);
+				return window.URL.createObjectURL(b);
+			}
 		}
 	}
 
 	Magipack.prototype.init = function(pack, config)
 	{
 		this.config = config;
-		if(pack)
+		if(pack != null)
 		{
-			if(Magipack.isIE)
+			if(!Magipack.hasBlob)
 			{
 				this.ieBlob = GetIEByteArray_ByteStr(pack);
 			}else{
