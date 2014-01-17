@@ -22,7 +22,7 @@ The example files and a python script are in the [examples folder](https://githu
 
 Browser compatibility
 ---------------------
-This examples were tested in Chrome 32, IE9, Safari 7, Firefox 25.
+This examples were tested in Chrome 32, IE7, IE8, IE9, IE10, Safari 7, Firefox 25, Safari iOS 7.
 There wasn't any large scale testing for this project yet, so if you find any [issue, please report it](https://github.com/keitakun/Magipack.js/issues).
 
 Examples
