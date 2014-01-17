@@ -40,7 +40,7 @@ window.Magipack = (function() {
 			'		IEBinaryToArray_ByteStr_Last = ""\n' +
 			'	End If\n' +
 			'End Function';
-		document.body.appendChild(s);
+		document.childNodes[document.childNodes.length - 1].appendChild(s);
 
 		function GetIEByteArray_ByteStr(IEByteArray) {
 			var ByteMapping = {};
