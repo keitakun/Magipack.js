@@ -9,7 +9,7 @@ def listFiles(path):
 	files = os.listdir(path)
 	arr = []
 	for f in files:
-		if f.lower().endswith(('.png', '.jpg', '.gif')):
+		if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
 			arr.append([path + f, f])
 		if os.path.isdir(path + '/' + f):
 			arr.extend(listFiles(path + f + '/'))
