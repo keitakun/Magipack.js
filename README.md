@@ -80,14 +80,14 @@ function handleComplete() {
 ```
 
 ### Packing images with packImages.py
-in terminal, if you are in unix system, set permissions to execute script
+In terminal, if you are in unix system, set permissions to execute script
 ```
 chmod 0755 packImages.py
 ```
 
-than run it passing the -p argument for the directory
+Then run it:
 ```
-./packImages.py -p assets
+./packImages.py -p <path> -o <output>
 ```
 
-It'll output *images.json* and *images.pack* in the same directory as *packImages.py* script.
+Both `path` and `output` are optional parameters and it will fallback to the same directory as the *packImages.py* script.

@@ -15,7 +15,7 @@ def listFiles(path):
 			arr.extend(listFiles(path + f + '/'))
 	return arr
 
-def packImages(files):
+def packImages(files, dest):
 
 	output = None
 	data = []
@@ -30,25 +30,30 @@ def packImages(files):
 		p += l
 		c += 1
 
-	open('images.pack', 'w').write(output)
-	open('images.json', 'w').write(json.dumps(data))
+	open(dest + 'images.pack', 'w').write(output)
+	open(dest + 'images.json', 'w').write(json.dumps(data))
 
-def main(argv = None):
-	path = '.'
-	if argv == None:
-		argv = sys.argv
+def main():
+	path = dest = "."
+
 	try:
-		opts, args = getopt.getopt(argv[1:], "p:k:", [""])
-		for option, value in opts:
-			if option in ("-p"): path = value
-	except Exception, e:
-		pass
+		myopts, args = getopt.getopt(sys.argv[1:],"p:o:")
+	except getopt.GetoptError as e:
+		print (str(e))
+		print("Usage: %s -p <path> -o <output>" % sys.argv[0])
+		sys.exit(2)
+	 
+	for o, a in myopts:
+		if o == '-p':
+			path = a
+		elif o == '-o':
+			dest = a
+
 	if len(path) > 0 and path[-1] != '/': path = path + '/'
-	packImages(listFiles(path))
+	if len(dest) > 0 and dest[-1] != '/': dest = dest + '/'
+	 
+	packImages(listFiles(path), dest)
+
 
 if __name__ == "__main__":
-	try:
-		main()
-	except Exception, e:
-		print e
-		pass
+	main()
