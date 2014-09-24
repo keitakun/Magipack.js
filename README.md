@@ -23,7 +23,12 @@ The example files and a python script are in the [examples folder](https://githu
 Browser compatibility
 ---------------------
 This examples were tested in Chrome 32, IE7, IE8, IE9, IE10, Safari 7, Firefox 25, Safari iOS 7.
+
+Older versions of IE (7 and 8) don't support more than 32KB [data URI](http://msdn.microsoft.com/en-us/library/cc848897(v=vs.85).aspx). Modern browsers, however, use URL.createObjectURL which doesn't have any size limit.
+
 There wasn't any large scale testing for this project yet, so if you find any [issue, please report it](https://github.com/keitakun/Magipack.js/issues).
+
+
 
 Examples
 ========
