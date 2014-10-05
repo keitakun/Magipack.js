@@ -3,10 +3,10 @@
   "version": "v1.0.0",
   "homepage": "https://github.com/keitakun/Magipack.js",
   "authors": [
-    "Keita Kuroki <keita@slikland.com>",
-    "Danilo Figueiredo <danilo@grifo.tv>"
+    "keitakun",
+    "grifotv"
   ],
-  "description": "A Javascript code that will help minimize HTTP requests.",
+  "description": "Magipack.js is a Javascript code that will help minimize HTTP requests.",
   "main": "src/Magipack.js",
   "keywords": [
     "minimize",
@@ -19,7 +19,9 @@
     "image",
     "URI",
     "blob",
-    "URL.createObjectURL"
+    "URL.createObjectURL",
+    "magipack.js",
+    "magipack-js"
   ],
   "license": "MIT",
   "ignore": [
