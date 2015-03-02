@@ -24,9 +24,12 @@ def packImages(files):
 	for fn in files:
 		f = open(fn[0], 'r').read()
 		l = len(f)
+		mimetype = 'image/'
 		if output == None: output = f
 		else: output = output + f
-		data.append([fn[1], p, p + l, fn[1][-3:]])
+		if fn[1][-3:] == 'jpg': mimetype += 'jpeg'
+		else: mimetype += fn[1][-3:]
+		data.append([fn[1], p, p + l, mimetype])
 		p += l
 		c += 1
 

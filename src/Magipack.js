@@ -208,7 +208,7 @@ window.Magipack = (function() {
 			var b;
 			if(this.blob.slice)
 			{
-				b = this.blob.slice(i, e);
+				b = this.blob.slice(i, e, type);
 				return window.URL.createObjectURL(b);
 			}else if (this.blob.webkitSlice)
 			{
